@@ -9,7 +9,8 @@ class Search extends Component {
   static propTypes = {
     searchUsers: PropTypes.func.isRequired,
     clearUsers: PropTypes.func.isRequired,
-    showClear: PropTypes.bool.isRequired
+    showClear: PropTypes.bool.isRequired,
+    setAlert: PropTypes.func.isRequired
   };
 
   // onChange method, sets the value of input text to the value a user types
@@ -19,9 +20,14 @@ class Search extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    // passing user text from search up to App which will handle the search to Github
-    this.props.searchUsers(this.state.text);
-    this.setState({ text: "" });
+
+    if (this.state.text === "") {
+      this.props.setAlert("Please enter text before searching.", "light");
+    } else {
+      // passing user text from search up to App which will handle the search to Github
+      this.props.searchUsers(this.state.text);
+      this.setState({ text: "" });
+    }
   };
 
   render() {
