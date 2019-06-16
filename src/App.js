@@ -16,7 +16,8 @@ class App extends React.Component {
     users: [],
     user: {},
     loading: false,
-    alert: null
+    alert: null,
+    repos: []
   };
 
   async componentDidMount() {
@@ -72,6 +73,24 @@ class App extends React.Component {
     this.setState({ user: response.data, loading: false });
   };
 
+  // Get user's repos
+  getUserRepos = async username => {
+    // set loading to true, will cause app to rerender with Spinner
+    this.setState({ loading: true });
+
+    // Using axios to make get requests to Github api using Github token
+    // to allow for unlimited get requests
+    const response = await axios.get(
+      `https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&client_id=${
+        process.env.REACT_APP_GITHUB_CLIENT_ID
+      }&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    // setting users array to contain all the data from the axios get request
+    // and setting loading to false now that all data has been extracted from axios
+    this.setState({ repos: response.data, loading: false });
+  };
+
   // Clear Users from state
   clearUsers = () => {
     this.setState({ users: [], loading: false });
@@ -86,7 +105,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { user, users, loading } = this.state;
+    const { user, users, loading, repos } = this.state;
 
     return (
       <BrowserRouter>
@@ -118,7 +137,9 @@ class App extends React.Component {
                   <User
                     {...props}
                     getUser={this.getUser}
+                    getUserRepos={this.getUserRepos}
                     user={user}
+                    repos={repos}
                     loading={loading}
                   />
                 )}

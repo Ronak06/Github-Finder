@@ -1,18 +1,23 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-
-import Spinner from "../layout/Spinner";
 import PropTypes from "prop-types";
+
+// import components
+import Spinner from "../layout/Spinner";
+import Repos from "../repos/Repos";
 
 class User extends Component {
   componentDidMount() {
     this.props.getUser(this.props.match.params.login);
+    this.props.getUserRepos(this.props.match.params.login);
   }
 
   static propTypes = {
     loading: PropTypes.bool,
     user: PropTypes.object.isRequired,
-    getUser: PropTypes.func.isRequired
+    getUser: PropTypes.func.isRequired,
+    getUserRepos: PropTypes.func.isRequired,
+    repos: PropTypes.array.isRequired
   };
 
   render() {
@@ -32,7 +37,7 @@ class User extends Component {
       hireable
     } = this.props.user;
 
-    const { loading } = this.props;
+    const { loading, repos } = this.props;
 
     if (loading) {
       return <Spinner />;
@@ -40,7 +45,7 @@ class User extends Component {
     return (
       <Fragment>
         <Link to="/" className="btn btn-light">
-          <i class="fas fa-arrow-left" /> Back to Search{" "}
+          <i className="fas fa-arrow-left" /> Back to Search{" "}
         </Link>
         <div className="card grid-2">
           <div className="all-center">
@@ -61,8 +66,7 @@ class User extends Component {
               </Fragment>
             )}
             <a href={html_url} className="btn btn-dark my-1">
-              <i className="fab fa-github" />
-              GitHub
+              <i className="fab fa-github" /> GitHub
             </a>
             <ul>
               <li>
@@ -104,6 +108,11 @@ class User extends Component {
           <div className="badge badge-light">Public Repos: {public_repos}</div>
           <div className="badge badge-dark">Public Gists: {public_gists}</div>
         </div>
+
+        <div>
+          <h3>Top 5 recent Repositories created:</h3>
+        </div>
+        <Repos repos={repos} />
       </Fragment>
     );
   }
