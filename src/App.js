@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import axios from "axios";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
@@ -11,36 +11,17 @@ import About from "./components/Pages/About";
 import User from "./components/users/User";
 import "./App.css";
 
-class App extends React.Component {
-  state = {
-    users: [],
-    user: {},
-    loading: false,
-    alert: null,
-    repos: []
-  };
-
-  async componentDidMount() {
-    // set loading to true, will cause app to rerender with Spinner
-    this.setState({ loading: true });
-
-    // Using axios to make get requests to Github api using Github token
-    // to allow for unlimited get requests
-    const response = await axios.get(
-      `https://api.github.com/users?client_id=${
-        process.env.REACT_APP_GITHUB_CLIENT_ID
-      }&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-    );
-
-    // setting users array to contain all the data from the axios get request
-    // and setting loading to false now that all data has been extracted from axios
-    this.setState({ users: response.data, loading: false });
-  }
+const App = () => {
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState({});
+  const [repos, setRepos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState(null);
 
   // search Github users
-  searchUsers = async text => {
+  const searchUsers = async text => {
     // set loading to true, will cause app to rerender with Spinner
-    this.setState({ loading: true });
+    setLoading(true);
 
     // Using axios to make get requests to Github api using Github token
     // to allow for unlimited get requests
@@ -52,13 +33,14 @@ class App extends React.Component {
 
     // setting users array to contain all the data from the axios get request
     // and setting loading to false now that all data has been extracted from axios
-    this.setState({ users: response.data.items, loading: false });
+    setUsers(response.data.items);
+    setLoading(false);
   };
 
   // Get single Github user
-  getUser = async username => {
+  const getUser = async username => {
     // set loading to true, will cause app to rerender with Spinner
-    this.setState({ loading: true });
+    setLoading(true);
 
     // Using axios to make get requests to Github api using Github token
     // to allow for unlimited get requests
@@ -70,13 +52,14 @@ class App extends React.Component {
 
     // setting users array to contain all the data from the axios get request
     // and setting loading to false now that all data has been extracted from axios
-    this.setState({ user: response.data, loading: false });
+    setUser(response.data);
+    setLoading(false);
   };
 
   // Get user's repos
-  getUserRepos = async username => {
+  const getUserRepos = async username => {
     // set loading to true, will cause app to rerender with Spinner
-    this.setState({ loading: true });
+    setLoading(true);
 
     // Using axios to make get requests to Github api using Github token
     // to allow for unlimited get requests
@@ -88,68 +71,66 @@ class App extends React.Component {
 
     // setting users array to contain all the data from the axios get request
     // and setting loading to false now that all data has been extracted from axios
-    this.setState({ repos: response.data, loading: false });
+    setRepos(response.data);
+    setLoading(false);
   };
 
   // Clear Users from state
-  clearUsers = () => {
-    this.setState({ users: [], loading: false });
+  const clearUsers = () => {
+    setUsers([]);
+    setLoading(false);
   };
 
   // Set alert for empty text
-  setAlert = (message, type) => {
-    this.setState({ alert: { message: message, type: type } });
+  const showAlert = (message, type) => {
+    setAlert({ message, type });
 
     // clears alert after 5 seconds
-    setTimeout(() => this.setState({ alert: null }), 5000);
+    setTimeout(() => setAlert(null), 5000);
   };
 
-  render() {
-    const { user, users, loading, repos } = this.state;
-
-    return (
-      <BrowserRouter>
-        <div className="App">
-          <Navbar />
-          <div className="container">
-            <Alert alert={this.state.alert} />
-            <Switch>
-              <Route
-                exact
-                path="/"
-                render={props => (
-                  <Fragment>
-                    <Search
-                      searchUsers={this.searchUsers}
-                      clearUsers={this.clearUsers}
-                      showClear={users.length > 0 ? true : false}
-                      setAlert={this.setAlert}
-                    />
-                    <Users loading={loading} users={users} />
-                  </Fragment>
-                )}
-              />
-              <Route exact path="/about" component={About} />
-              <Route
-                exact
-                path="/user/:login"
-                render={props => (
-                  <User
-                    {...props}
-                    getUser={this.getUser}
-                    getUserRepos={this.getUserRepos}
-                    user={user}
-                    repos={repos}
-                    loading={loading}
+  return (
+    <BrowserRouter>
+      <div className="App">
+        <Navbar />
+        <div className="container">
+          <Alert alert={alert} />
+          <Switch>
+            <Route
+              exact
+              path="/"
+              render={props => (
+                <Fragment>
+                  <Search
+                    searchUsers={searchUsers}
+                    clearUsers={clearUsers}
+                    showClear={users.length > 0 ? true : false}
+                    setAlert={showAlert}
                   />
-                )}
-              />
-            </Switch>
-          </div>
+                  <Users loading={loading} users={users} />
+                </Fragment>
+              )}
+            />
+            <Route exact path="/about" component={About} />
+            <Route
+              exact
+              path="/user/:login"
+              render={props => (
+                <User
+                  {...props}
+                  getUser={getUser}
+                  getUserRepos={getUserRepos}
+                  user={user}
+                  repos={repos}
+                  loading={loading}
+                />
+              )}
+            />
+          </Switch>
         </div>
-      </BrowserRouter>
-    );
-  }
-}
+      </div>
+    </BrowserRouter>
+  );
+};
 
 export default App;
