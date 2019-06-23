@@ -110,7 +110,7 @@ class User extends Component {
         </div>
 
         <div>
-          <h3>Top 5 recent Repositories created:</h3>
+          <h3>Latest 5 Repositories Created:</h3>
         </div>
         <Repos repos={repos} />
       </Fragment>
