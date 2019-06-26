@@ -58,6 +58,22 @@ const GithubState = props => {
   };
 
   // Fetch Repos
+  const getUserRepos = async username => {
+    // set loading to true, will cause app to rerender with Spinner
+    setLoading();
+
+    // Using axios to make get requests to Github api using Github token
+    // to allow for unlimited get requests
+    const response = await axios.get(
+      `https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&client_id=${
+        process.env.REACT_APP_GITHUB_CLIENT_ID
+      }&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    // setting users array to contain all the data from the axios get request
+    // and setting loading to false now that all data has been extracted from axios
+    dispatch({ type: FETCH_REPOS, payload: response.data });
+  };
 
   // Clear Users
   const clearUsers = () => dispatch({ type: CLEAR_USERS });
@@ -74,7 +90,8 @@ const GithubState = props => {
         loading: state.loading,
         searchUsers,
         clearUsers,
-        getUser
+        getUser,
+        getUserRepos
       }}
     >
       {props.children}

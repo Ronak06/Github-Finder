@@ -16,6 +16,8 @@ export default (state, action) => {
       return { ...state, users: [], loading: false };
     case FETCH_USER:
       return { ...state, user: action.payload, loading: false };
+    case FETCH_REPOS:
+      return { ...state, repos: action.payload, loading: false };
     default:
       return state;
   }
