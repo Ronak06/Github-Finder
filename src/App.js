@@ -13,30 +13,9 @@ import GithubState from "./context/github/GithubState";
 import "./App.css";
 
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState({});
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
-
-  // Get single Github user
-  const getUser = async username => {
-    // set loading to true, will cause app to rerender with Spinner
-    setLoading(true);
-
-    // Using axios to make get requests to Github api using Github token
-    // to allow for unlimited get requests
-    const response = await axios.get(
-      `https://api.github.com/users/${username}?client_id=${
-        process.env.REACT_APP_GITHUB_CLIENT_ID
-      }&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-    );
-
-    // setting users array to contain all the data from the axios get request
-    // and setting loading to false now that all data has been extracted from axios
-    setUser(response.data);
-    setLoading(false);
-  };
 
   // Get user's repos
   const getUserRepos = async username => {
@@ -54,12 +33,6 @@ const App = () => {
     // setting users array to contain all the data from the axios get request
     // and setting loading to false now that all data has been extracted from axios
     setRepos(response.data);
-    setLoading(false);
-  };
-
-  // Clear Users from state
-  const clearUsers = () => {
-    setUsers([]);
     setLoading(false);
   };
 
@@ -84,12 +57,8 @@ const App = () => {
                 path="/"
                 render={props => (
                   <Fragment>
-                    <Search
-                      clearUsers={clearUsers}
-                      showClear={users.length > 0 ? true : false}
-                      setAlert={showAlert}
-                    />
-                    <Users loading={loading} users={users} />
+                    <Search setAlert={showAlert} />
+                    <Users />
                   </Fragment>
                 )}
               />
@@ -98,14 +67,7 @@ const App = () => {
                 exact
                 path="/user/:login"
                 render={props => (
-                  <User
-                    {...props}
-                    getUser={getUser}
-                    getUserRepos={getUserRepos}
-                    user={user}
-                    repos={repos}
-                    loading={loading}
-                  />
+                  <User {...props} getUserRepos={getUserRepos} repos={repos} />
                 )}
               />
             </Switch>

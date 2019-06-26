@@ -40,11 +40,27 @@ const GithubState = props => {
       payload: response.data.items
     });
   };
+
   // Fetch User
+  const getUser = async username => {
+    // set loading to true, will cause app to rerender with Spinner
+    setLoading();
+
+    // Using axios to make get requests to Github api using Github token
+    // to allow for unlimited get requests
+    const response = await axios.get(
+      `https://api.github.com/users/${username}?client_id=${
+        process.env.REACT_APP_GITHUB_CLIENT_ID
+      }&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    dispatch({ type: FETCH_USER, payload: response.data });
+  };
 
   // Fetch Repos
 
   // Clear Users
+  const clearUsers = () => dispatch({ type: CLEAR_USERS });
 
   // Set Loading
   const setLoading = () => dispatch({ type: SET_LOADING });
@@ -56,7 +72,9 @@ const GithubState = props => {
         user: state.user,
         repos: state.repos,
         loading: state.loading,
-        searchUsers
+        searchUsers,
+        clearUsers,
+        getUser
       }}
     >
       {props.children}
