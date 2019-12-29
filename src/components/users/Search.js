@@ -1,12 +1,23 @@
 import React, { useState, useContext } from "react";
 import GithubContext from "../../context/github/githubContext";
 import AlertContext from "../../context/alert/alertContext";
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    "& > *": {}
+  }
+}));
 
 const Search = () => {
   const githubContext = useContext(GithubContext);
   const alertContext = useContext(AlertContext);
 
   const [text, setText] = useState("");
+
+  const classes = useStyles();
 
   // onChange method, sets the value of input text to the value a user types
   const onChange = e => {
@@ -27,27 +38,42 @@ const Search = () => {
 
   return (
     <div>
-      <form onSubmit={onSubmit} className="form">
-        <input
-          type="text"
-          name="text"
-          placeholder="Search for users..."
+      <h3>Search for your favourite Github user!</h3>
+      <form
+        className={classes.root}
+        onSubmit={onSubmit}
+        noValidate
+        autoComplete="off"
+      >
+        <TextField
+          id="outlined-basic"
+          label="Search for users..."
+          variant="outlined"
           value={text}
           onChange={onChange}
+          style={{ width: "100%" }}
+          size="small"
         />
-        <input
+        <br />
+        <br />
+        <Button
+          variant="contained"
           type="submit"
-          value="Search"
-          className="btn btn-dark btn-block"
-        />
+          color="primary"
+          style={{ width: "100%" }}
+        >
+          Search
+        </Button>
       </form>
+      <br />
       {githubContext.users.length > 0 && (
-        <button
-          className="btn btn-light btn-block"
+        <Button
+          variant="contained"
           onClick={githubContext.clearUsers}
+          style={{ width: "100%" }}
         >
           Clear
-        </button>
+        </Button>
       )}
     </div>
   );
