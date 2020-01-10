@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 
 // import components
 import Spinner from "../layout/Spinner";
@@ -38,8 +39,11 @@ const User = ({ match }) => {
   }
   return (
     <Fragment>
-      <Link to="/" className="btn btn-light">
-        <i className="fas fa-arrow-left" /> Back to Search{" "}
+      <Link to="/">
+        <Button variant="contained">
+          <i className="fas fa-arrow-left" style={{ marginRight: "5px" }} />
+          <p>Back to Search </p>
+        </Button>
       </Link>
       <div className="card grid-2">
         <div className="all-center">
@@ -60,7 +64,7 @@ const User = ({ match }) => {
             </Fragment>
           )}
           <a href={html_url} className="btn btn-dark my-1">
-            <i className="fab fa-github" /> GitHub
+            <i className="fab fa-github" /> Github
           </a>
           <ul>
             <li>

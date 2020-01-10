@@ -8,6 +8,7 @@ const Home = () => {
     <Fragment>
       <Search />
       <Users />
+      <br />
     </Fragment>
   );
 };
